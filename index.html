@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview - BO Registry Dashboard 2026-11</title>
+<meta name="description" content="Monthly, automatically updated overview of beneficial ownership registries worldwide: availability, public access, cost, identification and legitimate-interest requirements.">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script src="data.js"></script>
+<style>
+:root{--imf:#003399;--imf-dark:#002266;--imf-50:#eef2fa;--imf-100:#dbe4f5;--page:#f6f8fb;--surface:#fff;--ink:#1a1f2b;--ink2:#5b6475;
+--grid:#e6e9ef;--axis:#c2c8d3;--ring:rgba(0,34,102,.12);--good:#0aac23;--goodtext:#006c10;--warn:#fbb315;--serious:#f18a59;--crit:#dc3c3d;
+font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-size:14px}
+.top{background:var(--imf);color:#fff}
+.top .in{max-width:1500px;margin:auto;padding:18px 32px 0;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.top h1{font-size:21px;margin:0 0 4px;font-weight:600;letter-spacing:.01em}.top .sub{color:#c9d6f2;font-size:12.5px;margin-bottom:14px}
+.tabs{display:flex;gap:2px}.tabs a{color:#dbe4f5;text-decoration:none;padding:10px 18px;border-radius:8px 8px 0 0;font-weight:500}
+.tabs a:hover{background:rgba(255,255,255,.1);color:#fff}.tabs a.on{background:var(--page);color:var(--imf)}
+h2{font-size:15px;margin:0 0 2px;color:var(--imf-dark)}.sub{color:var(--ink2);font-size:13px}
+.wrap{padding:0 32px 40px;max-width:1500px;margin:auto}
+.filters{display:flex;flex-wrap:wrap;gap:12px;align-items:end;padding:16px 0;position:sticky;top:0;background:var(--page);z-index:5}
+.filters label{display:flex;flex-direction:column;font-size:12px;color:var(--ink2);gap:4px}
+select,input[type=search]{font:inherit;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);min-width:150px}
+select:focus,input:focus{outline:2px solid var(--imf);outline-offset:1px}
+.chk{flex-direction:row!important;align-items:center;gap:6px!important;color:var(--ink)!important;font-size:13px!important;padding-bottom:7px}
+button{font:inherit;padding:6px 12px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);cursor:pointer;color:var(--imf-dark)}
+button.primary{background:var(--imf);border-color:var(--imf);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--surface);border:1px solid var(--ring);border-top:3px solid var(--imf);border-radius:8px;padding:14px 16px}
+.tile .v{font-size:30px;font-weight:600;line-height:1.1;color:var(--imf-dark)}.tile .l{color:var(--ink2);font-size:12px;margin-top:4px}
+.tile .d{font-size:12px;margin-top:6px;color:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:1000px){.grid2{grid-template-columns:1fr}.wrap,.top .in{padding-left:14px;padding-right:14px}}
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:8px;padding:16px;min-width:0;margin-bottom:16px}
+.grid2 .card{margin-bottom:0}.card .plot{width:100%;height:400px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 0;font-size:12px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}.sw{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-size:12px;color:var(--imf-dark);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--imf-50);z-index:1}
+tbody tr.row{cursor:pointer}tbody tr.row:hover{background:var(--imf-50)}.scroll{max-height:640px;overflow:auto;border:1px solid var(--grid);border-radius:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:999px;font-size:12px;border:1px solid var(--ring);white-space:nowrap;background:#fff}
+.yn{font-size:12px;white-space:nowrap;font-weight:600}.yn.y{color:var(--goodtext)}.yn.n{color:#b42324}.yn.u{color:var(--ink2);font-weight:400}
+.lowc{font-size:11px;color:var(--ink2);font-weight:400}
+.detail td{background:#fafbfe;padding:12px 16px}
+.crit{width:100%;border-collapse:collapse;margin:4px 0 12px}.crit td,.crit th{border-bottom:1px solid var(--grid);padding:6px 8px;font-size:12.5px}
+.crit th{position:static;background:none}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 24px}
+.dgrid div b{display:block;font-size:11px;color:var(--imf-dark);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+.muted{color:var(--ink2)}a{color:var(--imf)}a.ext{word-break:break-word}q{font-style:italic;color:#333}
+.assess{line-height:1.5;max-width:620px}.assess .src{display:block;font-size:11px;color:var(--ink2);margin-top:4px}
+.flags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}.flags span{font-size:11px;background:var(--imf-50);color:var(--imf-dark);border-radius:4px;padding:1px 6px}
+.prio{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+footer{color:var(--ink2);font-size:12px;padding:8px 0 0;line-height:1.6;border-top:1px solid var(--grid);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <div><h1>Beneficial Ownership Registry Dashboard</h1><div class="sub" id="asof"></div></div>
+  <nav class="tabs"><a href="index.html" class="on">Overview</a><a href="countries.html">Country details</a></nav>
+</div></div>
+<div class="wrap">
+
+  <div class="filters">
+    <label>Region<select id="fRegion"></select></label>
+    <label>FCS<select id="fFcs"><option value="">All</option><option>YES</option><option>NO</option></select></label>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid2">
+    <div class="card"><h2>Registry access tier by country</h2><div class="sub">Automated Phase I (live, centralized register?) + Phase II (objective access criteria). Click a country for details.</div>
+      <div id="map" class="plot"></div></div>
+    <div class="card"><h2>Access tier by region</h2><div class="sub">Number of countries</div><div id="byRegion" class="plot"></div></div>
+    <div class="card"><h2>Access funnel</h2><div class="sub">Countries meeting each objective criterion, cumulatively. Unknown answers do not pass.</div><div id="funnel" class="plot"></div></div>
+    <div class="card"><h2>Monthly trend</h2><div class="sub">All countries - one point per monthly refresh</div><div id="trend" class="plot"></div></div>
+  </div>
+  <div class="legend" id="legend" style="margin-bottom:16px"></div>
+<script>
+
+const D = window.BO_DATA, C = D.countries, TC = D.tierColors, TIERS = D.tiers;
+const $ = id => document.getElementById(id);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const font = {family:'system-ui,-apple-system,"Segoe UI",Arial,sans-serif', size:12, color:'#1a1f2b'};
+const cfg = {displayModeBar:false, responsive:true};
+const IMF = '#003399';
+$('asof').textContent = `Data month ${D.month} - updated automatically on ${D.run_date} - ${C.length} countries and territories`;
+const regions = [...new Set(C.map(c=>c.region))].sort();
+function fillSelect(id, opts){ if($(id)) $(id).innerHTML='<option value="">All</option>'+opts.map(o=>`<option>${esc(o)}</option>`).join(''); }
+fillSelect('fRegion', regions); fillSelect('fTier', TIERS);
+const tierPill = t => `<span class="pill"><i class="sw" style="background:${TC[t]};${t==='No operational registry'?'':''}"></i>${esc(t)}</span>`;
+const link = (u,t) => u ? `<a class="ext" href="${esc(u)}" target="_blank" rel="noopener">${esc(t||u)}</a>` : '<span class="muted">-</span>';
+
+['fRegion','fFcs'].forEach(id=>$(id).addEventListener('change', render));
+$('reset').onclick=()=>{$('fRegion').value='';$('fFcs').value='';render();};
+const filtered=()=>{const r=$('fRegion').value,f=$('fFcs').value;return C.filter(c=>(!r||c.region===r)&&(!f||c.fcs===f));};
+function kpis(rows){
+  const n=rows.length, op=rows.filter(c=>c.registry_operational_n==='YES');
+  const pub=op.filter(c=>c.open_to_public_n==='YES').length, full=rows.filter(c=>c.access_tier==='Fully accessible').length;
+  const fcs=rows.filter(c=>c.fcs==='YES'&&c.registry_operational_n==='YES').length;
+  const auto=op.filter(c=>c.site_reachable===true&&!c.bot_blocked).length, flg=rows.filter(c=>(c.review_flags||[]).length).length;
+  const prev=D.kpiHistory.length>1?D.kpiHistory[D.kpiHistory.length-2]:null, all=!$('fRegion').value&&!$('fFcs').value;
+  const delta=(k,v)=>(prev&&all)?((d=>d===0?`no change vs ${prev.month}`:`${d>0?'+':''}${d} vs ${prev.month}`)(v-Number(prev[k]))):'';
+  const T=[[n,'Countries & territories covered',''],
+    [op.length,'Live, full-economy BO register',[n?Math.round(100*op.length/n)+'% of covered':'',delta('operational_registries',op.length)].filter(Boolean).join(' - ')],
+    [pub,'Open to the public',op.length?Math.round(100*pub/op.length)+'% of live registers':''],
+    [full,'Fully accessible (all 4 criteria)',delta('fully_accessible',full)],
+    [fcs,'FCS countries with a register',''],
+    [auto,'Registry websites assessed automatically',op.length?`of ${op.length} live registers`:''],
+    [flg,'Results needing a human check','see Country details']];
+  $('kpis').innerHTML=T.map(([v,l,d])=>`<div class="tile"><div class="v">${v}</div><div class="l">${esc(l)}</div><div class="d">${esc(d)}</div></div>`).join('');
+}
+function map(rows){
+  const traces=TIERS.filter(t=>rows.some(c=>c.access_tier===t&&c.iso3)).map(t=>{const rs=rows.filter(c=>c.access_tier===t&&c.iso3);
+    return {type:'choropleth',locations:rs.map(c=>c.iso3),z:rs.map(()=>1),name:t,colorscale:[[0,TC[t]],[1,TC[t]]],showscale:false,
+      marker:{line:{color:'#fff',width:0.6}},customdata:rs.map(c=>c.iso3),hovertemplate:'%{text}<extra></extra>',
+      text:rs.map(c=>`<b>${esc(c.country)}</b><br>${esc(t)}<br>Register: ${esc(c.registry_status)}`+((c.barriers||[]).length?`<br>Barriers: ${esc(c.barriers.join(', '))}`:''))};});
+  Plotly.react('map',traces,{margin:{l:0,r:0,t:0,b:0},font,showlegend:false,paper_bgcolor:'rgba(0,0,0,0)',
+    geo:{projection:{type:'natural earth'},showframe:false,showcoastlines:false,showcountries:true,countrycolor:'#fff',
+      landcolor:'#eceff4',bgcolor:'rgba(0,0,0,0)',lataxis:{range:[-58,85]}}},cfg);
+  $('map').on && $('map').removeAllListeners && $('map').removeAllListeners('plotly_click');
+  $('map').on('plotly_click',e=>{const p=e.points&&e.points[0]; if(p&&p.customdata) location.href='countries.html?c='+p.customdata;});
+}
+function byRegion(rows){
+  const regs=[...new Set(rows.map(c=>c.region))].sort().reverse();
+  Plotly.react('byRegion',TIERS.map(t=>({type:'bar',orientation:'h',name:t,y:regs,x:regs.map(r=>rows.filter(c=>c.region===r&&c.access_tier===t).length),
+    marker:{color:TC[t],line:{color:'#fff',width:2}},hovertemplate:`%{y}<br>${t}: %{x}<extra></extra>`})),
+    {barmode:'stack',margin:{l:50,r:10,t:10,b:30},font,paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,
+     xaxis:{gridcolor:'#e6e9ef',zeroline:false},yaxis:{automargin:true},bargap:0.35},cfg);
+}
+function funnel(rows){
+  const s1=rows.filter(c=>c.registry_operational_n==='YES'), s2=s1.filter(c=>c.open_to_public_n==='YES');
+  const s3=s2.filter(c=>c.anonymous_n==='YES'), s4=s3.filter(c=>c.free_n==='YES'), s5=s4.filter(c=>c.no_legit_interest_n==='YES');
+  const lab=['Covered','Live full-economy register','Open to the public','+ Anonymous access','+ Free of charge','+ No legitimate-interest test'];
+  const v=[rows,s1,s2,s3,s4,s5].map(a=>a.length);
+  Plotly.react('funnel',[{type:'bar',orientation:'h',y:lab,x:v,text:v.map((x,i)=>i?`${x} (${v[0]?Math.round(100*x/v[0]):0}%)`:String(x)),
+    textposition:'outside',cliponaxis:false,marker:{color:IMF},hovertemplate:'%{y}: %{x}<extra></extra>'}],
+    {margin:{l:185,r:70,t:10,b:30},font,paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',yaxis:{autorange:'reversed'},
+     xaxis:{gridcolor:'#e6e9ef',zeroline:false},bargap:0.4},cfg);
+}
+function trend(){
+  const H=D.kpiHistory,m=H.map(h=>h.month);
+  const S=[['operational_registries','Live full-economy registers',IMF,'solid'],['open_to_public','Open to the public','#4a6fc4','dash'],['fully_accessible','Fully accessible','#001f5c','dot']];
+  Plotly.react('trend',S.map(([k,n,col,dash])=>({type:'scatter',mode:'lines+markers',name:n,x:m,y:H.map(h=>Number(h[k])),
+    line:{color:col,width:2,dash},marker:{size:8,line:{color:'#fff',width:2}},hovertemplate:`${n}: %{y}<extra>%{x}</extra>`})),
+    {margin:{l:40,r:10,t:10,b:60},font,paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',hovermode:'x unified',
+     legend:{orientation:'h',y:-0.18,font:{size:11,color:'#5b6475'}},xaxis:{type:'category',gridcolor:'#e6e9ef'},yaxis:{gridcolor:'#e6e9ef',rangemode:'tozero'}},cfg);
+}
+function render(){const r=filtered();kpis(r);map(r);byRegion(r);funnel(r);
+  $('legend').innerHTML='<b style="color:#002266;margin-right:4px">Access tiers:</b>'+TIERS.map(t=>`<span><i class="sw" style="background:${TC[t]}"></i>${esc(t)} (${r.filter(c=>c.access_tier===t).length})</span>`).join('');}
+render();trend();
+</script>
+
+  <footer>
+    <b>How results are produced.</b> Every month the pipeline (1) downloads Open Ownership's worldwide map to find countries with a live, full-economy BO register and its legal access rules;
+    (2) visits each register's website with a headless browser and follows links to the BO search; (3) answers the four objective criteria - open to the public, anonymous access, free of charge,
+    access without a legitimate-interest test - from that evidence with transparent rules and an AI reading of the pages whose quotes are checked against the page text;
+    (4) scores ease of access and tracks stability from monthly uptime. Where evidence is missing the value is <i>Unknown</i> and the country is listed for a human check.
+    <br><b>Sources.</b> Open Ownership worldwide map (openownership.org); national BO registry websites; country list, BO law references, regions and FCS status maintained by the project team.
+    Automated results can be wrong - confirm on the registry website before relying on them.
+  </footer>
+</div>
+</body>
+</html>
